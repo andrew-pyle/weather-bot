@@ -11,42 +11,57 @@ class App extends React.Component {
       lat: "",
       long: "",
       geoError: null,
+      geoLoading: false,
     };
   }
 
   requestGeolocation = () => {
+    this.setState({
+      geoLoading: true,
+    });
     fetchGeoCoords()
       .then((coords) => {
         this.setState({
           lat: coords.lat,
           long: coords.long,
+          geoLoading: false,
         });
       })
       .catch((err) => {
         console.error(err);
         this.setState({
-          geoError: err,
+          geoError: err.message,
+          geoLoading: false,
         });
       });
   };
 
   // html
   render() {
-    if (!this.state.lat || !this.state.long) {
-      return (
-        <div>
-          <p>
-            Weather Bot needs location access from the browser to do it's job.
-          </p>
-          <button type="button" onClick={this.requestGeolocation}>
-            Allow Location Access
-          </button>
-        </div>
-      );
-    }
     return (
       <div>
-        <WeatherInfo lat={this.state.lat} long={this.state.long} />
+        {this.state.geoError ? (
+          <p>We had an Error 😱: "{this.state.geoError}"</p>
+        ) : null}
+        {!this.state.lat || !this.state.long ? (
+          this.state.geoLoading ? (
+            <p>Loading...</p>
+          ) : (
+            <div>
+              <p>
+                Weather Bot needs location access from the browser to do it's
+                job.
+              </p>
+              <button type="button" onClick={this.requestGeolocation}>
+                Allow Location Access
+              </button>
+            </div>
+          )
+        ) : (
+          <div>
+            <WeatherInfo lat={this.state.lat} long={this.state.long} />
+          </div>
+        )}
       </div>
     );
   }
@@ -120,7 +135,6 @@ function fetchGeoCoords() {
         resolve({ lat, long });
       },
       (err) => {
-        console.error(err);
         reject(err);
       }
     );
