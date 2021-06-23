@@ -97,9 +97,13 @@ class WeatherInfo extends React.Component {
         {this.state.weatherError ? (
           <p>We had an Error 😱: "{this.state.weatherError}"</p>
         ) : null}
-        <pre>
-          <code>{JSON.stringify(this.state.weatherData, null, 2)}</code>
-        </pre>
+        <p>
+          { this.state.weatherData ? 
+            determineOutfit(this.state.weatherData.shortForecast, this.state.weatherData.temperature)
+          :
+            "Please wait..."
+          }
+        </p>
       </div>
     );
   }
@@ -131,6 +135,27 @@ function parseWeatherApiResponse(json) {
   const shortForecast = json.properties.periods[0].shortForecast;
   const temperature = json.properties.periods[0].temperature;
   return { shortForecast, temperature };
+}
+
+function determineOutfit(shortForecast, temperature) {
+  if (isRaining(shortForecast)) {
+    if (temperature < 100)
+      return "Better wear a jacket and bring an umbrella."
+    else
+      return "Bring an umbrella."
+  }
+  else {
+    if (temperature < 100)
+      return "It's sunny, but you better wear a jacket."
+    else
+      return "It's sunny, and it feels lovely outside; wear some shorts."
+  }
+
+}
+
+function isRaining(shortForecast) {
+  const regex = /rain|storm|shower/i;
+  return regex.test(shortForecast);
 }
 
 /**
