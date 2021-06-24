@@ -53,7 +53,7 @@ class App extends React.Component {
                 job.
               </p>
               <button type="button" onClick={this.requestGeolocation}>
-                Allow Location Access
+                Use Device Location
               </button>
             </div>
           )
