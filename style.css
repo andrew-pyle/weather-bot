@@ -14,11 +14,13 @@ body {
   /* Layout */
   display: grid;
   justify-content: center;
+  grid-template-columns: minmax(10px, 700px);
 }
 
 h1 {
   font-weight: 900;
   font-size: 3em;
+  margin-bottom: 0;
 }
 
 .app-container {
