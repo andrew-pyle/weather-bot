@@ -12,6 +12,7 @@ class App extends React.Component {
       long: "",
       geoError: null,
       geoLoading: false,
+      turboMode: false,
     };
   }
 
@@ -36,10 +37,17 @@ class App extends React.Component {
       });
   };
 
+  changeTurboMode = () => {
+    console.log("yello");
+    this.setState(function (prevState) {
+      return { turboMode: !prevState.turboMode };
+    });
+  };
+
   // html
   render() {
     return (
-      <div>
+      <div className={this.state.turboMode ? "turbo" : null}>
         {this.state.geoError ? (
           <p>We had an Error 🐩: "{this.state.geoError}"</p>
         ) : null}
@@ -55,6 +63,10 @@ class App extends React.Component {
               <button type="button" onClick={this.requestGeolocation}>
                 Use Device Location
               </button>
+              <Turbo
+                turboMode={this.state.turboMode}
+                onToggle={this.changeTurboMode}
+              ></Turbo>
             </div>
           )
         ) : (
@@ -113,15 +125,31 @@ class WeatherInfo extends React.Component {
           <p>We had an Error 😱: "{this.state.weatherError}"</p>
         ) : null}
         <p>
-          { this.state.weatherData ? 
-            determineOutfit(this.state.weatherData.shortForecast, this.state.weatherData.temperature)
-          :
-            "Please wait..."
-          }
+          {this.state.weatherData
+            ? determineOutfit(
+                this.state.weatherData.shortForecast,
+                this.state.weatherData.temperature
+              )
+            : "Please wait..."}
         </p>
       </div>
     );
   }
+}
+
+function Turbo(props) {
+  return (
+    <p>
+      <label>
+        <input
+          type="checkbox"
+          checked={props.turboMode}
+          onChange={props.onToggle}
+        ></input>
+        Turbo Mode?
+      </label>
+    </p>
+  );
 }
 
 /**
@@ -161,18 +189,12 @@ function parseWeatherApiResponse(json) {
 
 function determineOutfit(shortForecast, temperature) {
   if (isRaining(shortForecast)) {
-    if (temperature < 100)
-      return "Better wear a jacket and bring an umbrella."
-    else
-      return "Bring an umbrella."
+    if (temperature < 100) return "Better wear a jacket and bring an umbrella.";
+    else return "Bring an umbrella.";
+  } else {
+    if (temperature < 100) return "It's sunny, but you better wear a jacket.";
+    else return "It's sunny, and it feels lovely outside; wear some shorts.";
   }
-  else {
-    if (temperature < 100)
-      return "It's sunny, but you better wear a jacket."
-    else
-      return "It's sunny, and it feels lovely outside; wear some shorts."
-  }
-
 }
 
 function isRaining(shortForecast) {

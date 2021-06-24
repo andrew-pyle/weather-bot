@@ -23,9 +23,17 @@ h1 {
   margin-bottom: 0;
 }
 
+button {
+  font-family: inherit;
+}
+
 .app-container {
   border: 2px solid var(--color-bg-accent);
   border-radius: 4px;
   background: var(--color-light);
   padding: 1em;
+}
+
+.turbo {
+  font-family: "Papyrus", serif;
 }
