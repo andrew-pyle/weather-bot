@@ -113,6 +113,10 @@ class WeatherInfo extends React.Component {
  * Helper Functions
  */
 
+// In milliseconds
+const FIFTEEN_MINTUES = 5 * 60 * 1000;
+const FIVE_SECONDS = 5 * 1000;
+
 function fetchGeoCoords() {
   return new Promise((resolve, reject) => {
     navigator.geolocation.getCurrentPosition(
@@ -126,6 +130,10 @@ function fetchGeoCoords() {
       (err) => {
         console.error(err);
         reject(err);
+      },
+      {
+        maximumAge: FIFTEEN_MINTUES,
+        timeout: FIVE_SECONDS,
       }
     );
   });
