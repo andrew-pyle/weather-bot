@@ -41,7 +41,7 @@ class App extends React.Component {
     return (
       <div>
         {this.state.geoError ? (
-          <p>We had an Error 😱: "{this.state.geoError}"</p>
+          <p>We had an Error 🐩: "{this.state.geoError}"</p>
         ) : null}
         {!this.state.lat || !this.state.long ? (
           this.state.geoLoading ? (
