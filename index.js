@@ -112,9 +112,13 @@ class WeatherInfo extends React.Component {
         {this.state.weatherError ? (
           <p>We had an Error 😱: "{this.state.weatherError}"</p>
         ) : null}
-        <pre>
-          <code>{JSON.stringify(this.state.weatherData, null, 2)}</code>
-        </pre>
+        <p>
+          { this.state.weatherData ? 
+            determineOutfit(this.state.weatherData.shortForecast, this.state.weatherData.temperature)
+          :
+            "Please wait..."
+          }
+        </p>
       </div>
     );
   }
@@ -123,6 +127,10 @@ class WeatherInfo extends React.Component {
 /**
  * Helper Functions
  */
+
+// In milliseconds
+const FIFTEEN_MINTUES = 5 * 60 * 1000;
+const FIVE_SECONDS = 5 * 1000;
 
 function fetchGeoCoords() {
   return new Promise((resolve, reject) => {
@@ -136,6 +144,10 @@ function fetchGeoCoords() {
       },
       (err) => {
         reject(err);
+      },
+      {
+        maximumAge: FIFTEEN_MINTUES,
+        timeout: FIVE_SECONDS,
       }
     );
   });
@@ -145,6 +157,27 @@ function parseWeatherApiResponse(json) {
   const shortForecast = json.properties.periods[0].shortForecast;
   const temperature = json.properties.periods[0].temperature;
   return { shortForecast, temperature };
+}
+
+function determineOutfit(shortForecast, temperature) {
+  if (isRaining(shortForecast)) {
+    if (temperature < 100)
+      return "Better wear a jacket and bring an umbrella."
+    else
+      return "Bring an umbrella."
+  }
+  else {
+    if (temperature < 100)
+      return "It's sunny, but you better wear a jacket."
+    else
+      return "It's sunny, and it feels lovely outside; wear some shorts."
+  }
+
+}
+
+function isRaining(shortForecast) {
+  const regex = /rain|storm|shower/i;
+  return regex.test(shortForecast);
 }
 
 /**
