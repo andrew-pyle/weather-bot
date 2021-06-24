@@ -47,34 +47,36 @@ class App extends React.Component {
   // html
   render() {
     return (
-      <div className={this.state.turboMode ? "turbo" : null}>
-        {this.state.geoError ? (
-          <p>We had an Error 🐩: "{this.state.geoError}"</p>
-        ) : null}
-        {!this.state.lat || !this.state.long ? (
-          this.state.geoLoading ? (
-            <p>Loading...</p>
+      <RobotSays>
+        <div className={this.state.turboMode ? "turbo" : null}>
+          {this.state.geoError ? (
+            <p>We had an Error 🐩: "{this.state.geoError}"</p>
+          ) : null}
+          {!this.state.lat || !this.state.long ? (
+            this.state.geoLoading ? (
+              <p>Loading...</p>
+            ) : (
+              <div>
+                <p>
+                  Weather Bot needs location access from the browser to do it's
+                  job.
+                </p>
+                <button type="button" onClick={this.requestGeolocation}>
+                  Use Device Location
+                </button>
+                <Turbo
+                  turboMode={this.state.turboMode}
+                  onToggle={this.changeTurboMode}
+                ></Turbo>
+              </div>
+            )
           ) : (
             <div>
-              <p>
-                Weather Bot needs location access from the browser to do it's
-                job.
-              </p>
-              <button type="button" onClick={this.requestGeolocation}>
-                Use Device Location
-              </button>
-              <Turbo
-                turboMode={this.state.turboMode}
-                onToggle={this.changeTurboMode}
-              ></Turbo>
+              <WeatherInfo lat={this.state.lat} long={this.state.long} />
             </div>
-          )
-        ) : (
-          <div>
-            <WeatherInfo lat={this.state.lat} long={this.state.long} />
-          </div>
-        )}
-      </div>
+          )}
+        </div>
+      </RobotSays>
     );
   }
 }
@@ -122,7 +124,7 @@ class WeatherInfo extends React.Component {
     return (
       <div>
         {this.state.weatherError ? (
-          <p>We had an Error 😱: "{this.state.weatherError}"</p>
+          <p>We had an Error 😱: {this.state.weatherError}</p>
         ) : null}
         <p>
           {this.state.weatherData
@@ -149,6 +151,15 @@ function Turbo(props) {
         Turbo Mode?
       </label>
     </p>
+  );
+}
+
+function RobotSays(props) {
+  return (
+    <div className="robotResponse">
+      <img src="robotTalking.gif" height="50" className="robotTalking"></img>
+      {props.children}
+    </div>
   );
 }
 

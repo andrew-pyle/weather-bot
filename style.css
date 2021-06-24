@@ -37,3 +37,13 @@ button {
 .turbo {
   font-family: "Papyrus", serif;
 }
+
+.robotTalking {
+  height: 50px;
+  width: auto;
+}
+
+.robotResponse {
+  display: flex;
+  justify-content: flex-start;
+}
