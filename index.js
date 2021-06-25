@@ -64,10 +64,6 @@ class App extends React.Component {
                 <button type="button" onClick={this.requestGeolocation}>
                   Use Device Location
                 </button>
-                <Turbo
-                  turboMode={this.state.turboMode}
-                  onToggle={this.changeTurboMode}
-                ></Turbo>
               </div>
             )
           ) : (
@@ -75,6 +71,10 @@ class App extends React.Component {
               <WeatherInfo lat={this.state.lat} long={this.state.long} />
             </div>
           )}
+          <Turbo
+            turboMode={this.state.turboMode}
+            onToggle={this.changeTurboMode}
+          ></Turbo>
         </div>
       </RobotSays>
     );
@@ -97,7 +97,7 @@ class WeatherInfo extends React.Component {
       .then((res) => {
         if (res.ok) {
           return res.json();
-        }
+        } else throw new Error("HTTP Error: " + res.status);
       })
       .then((json) => {
         const { shortForecast, temperature } = parseWeatherApiResponse(json);
@@ -111,7 +111,7 @@ class WeatherInfo extends React.Component {
       .catch((err) => {
         console.error(err);
         this.setState({
-          weatherError: err,
+          weatherError: err.message,
         });
       });
   };
@@ -125,15 +125,16 @@ class WeatherInfo extends React.Component {
       <div>
         {this.state.weatherError ? (
           <p>We had an Error 😱: {this.state.weatherError}</p>
-        ) : null}
-        <p>
-          {this.state.weatherData
-            ? determineOutfit(
-                this.state.weatherData.shortForecast,
-                this.state.weatherData.temperature
-              )
-            : "Please wait..."}
-        </p>
+        ) : (
+          <p>
+            {this.state.weatherData
+              ? determineOutfit(
+                  this.state.weatherData.shortForecast,
+                  this.state.weatherData.temperature
+                )
+              : "Please wait..."}
+          </p>
+        )}
       </div>
     );
   }
