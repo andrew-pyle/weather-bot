@@ -71,21 +71,43 @@ export class WeatherInfo extends React.Component<Props, State> {
 
 // Helper Functions
 
-// FIX-ME ***********************************
-// function isValidWeatherResponse(response : unknown) : response is {shortForecast : string, temperature : number} {
-//   if (typeof response === "object") { if("properties" in response) }
-
-// }
-
-function parseWeatherApiResponse(json: Record<string, unknown>): {
+/**
+ * Empirically Determined
+ * https://api.weather.gov/points/{latitude},{longitude}/forecast/
+ */
+interface NationalWeatherServiceApiResponse {
+  properties: {
+    periods: NationalWeatherServiceForecast[];
+    // ...
+  };
+}
+/**
+ * Empirically Determined
+ * https://api.weather.gov/points/{latitude},{longitude}/forecast/
+ */
+interface NationalWeatherServiceForecast {
+  detailedForecast: string;
+  endTime: string; // "2021-06-25T18:00:00-05:00"
+  icon: string; // "https://api.weather.gov/icons/land/day/tsra_hi,20?size=medium"
+  isDaytime: boolean;
+  name: string; // "This Afternoon"
+  number: number; // index (1-based)
+  shortForecast: string; // "Slight Chance Showers And Thunderstorms"
+  startTime: string; // "2021-06-25T14:00:00-05:00"
+  temperature: number; // 92
+  temperatureTrend: null; // ??
+  temperatureUnit: string; // "F"
+  windDirection: string; // "S"
+  windSpeed: string; // "10 mph"
+}
+function parseWeatherApiResponse(json: NationalWeatherServiceApiResponse): {
   shortForecast: string;
   temperature: number;
 } {
-  const shortForecast = json?.properties?.periods[0].shortForecast;
+  const shortForecast = json.properties.periods[0].shortForecast;
   const temperature = json.properties.periods[0].temperature;
   return { shortForecast, temperature };
 }
-// FIX-ME ***********************************
 
 function determineOutfit(shortForecast: string, temperature: number): string {
   if (isRaining(shortForecast)) {
