@@ -1,15 +1,21 @@
-/**
- * Globals:
- * - React
- * - ReactDOM
- */
+import React from "react";
+import ReactDOM from "react-dom";
 
-class App extends React.Component {
-  constructor(props) {
+interface Props {}
+interface State {
+  lat: null | number;
+  long: null | number;
+  geoError: null | string;
+  geoLoading: boolean;
+  turboMode: boolean;
+}
+
+export class App extends React.Component<Props, State> {
+  constructor(props: Props) {
     super(props);
     this.state = {
-      lat: "",
-      long: "",
+      lat: null,
+      long: null,
       geoError: null,
       geoLoading: false,
       turboMode: false,
@@ -81,7 +87,31 @@ class App extends React.Component {
   }
 }
 
-class WeatherInfo extends React.Component {
+function Turbo(props) {
+  return (
+    <p>
+      <label>
+        <input
+          type="checkbox"
+          checked={props.turboMode}
+          onChange={props.onToggle}
+        ></input>
+        Turbo Mode?
+      </label>
+    </p>
+  );
+}
+
+function RobotSays(props) {
+  return (
+    <div className="robotResponse">
+      <img src="robotTalking.gif" height="50" className="robotTalking"></img>
+      {props.children}
+    </div>
+  );
+}
+
+export class WeatherInfo extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -140,30 +170,6 @@ class WeatherInfo extends React.Component {
   }
 }
 
-function Turbo(props) {
-  return (
-    <p>
-      <label>
-        <input
-          type="checkbox"
-          checked={props.turboMode}
-          onChange={props.onToggle}
-        ></input>
-        Turbo Mode?
-      </label>
-    </p>
-  );
-}
-
-function RobotSays(props) {
-  return (
-    <div className="robotResponse">
-      <img src="robotTalking.gif" height="50" className="robotTalking"></img>
-      {props.children}
-    </div>
-  );
-}
-
 /**
  * Helper Functions
  */
@@ -172,7 +178,7 @@ function RobotSays(props) {
 const FIFTEEN_MINTUES = 5 * 60 * 1000;
 const FIVE_SECONDS = 5 * 1000;
 
-function fetchGeoCoords() {
+export function fetchGeoCoords() {
   return new Promise((resolve, reject) => {
     navigator.geolocation.getCurrentPosition(
       (response) => {
@@ -193,13 +199,16 @@ function fetchGeoCoords() {
   });
 }
 
-function parseWeatherApiResponse(json) {
+export function parseWeatherApiResponse(json) {
   const shortForecast = json.properties.periods[0].shortForecast;
   const temperature = json.properties.periods[0].temperature;
   return { shortForecast, temperature };
 }
 
-function determineOutfit(shortForecast, temperature) {
+export function determineOutfit(
+  shortForecast: string,
+  temperature: number
+): string {
   if (isRaining(shortForecast)) {
     if (temperature < 100) return "Better wear a jacket and bring an umbrella.";
     else return "Bring an umbrella.";
@@ -209,7 +218,7 @@ function determineOutfit(shortForecast, temperature) {
   }
 }
 
-function isRaining(shortForecast) {
+function isRaining(shortForecast: string): boolean {
   const regex = /rain|storm|shower/i;
   return regex.test(shortForecast);
 }
