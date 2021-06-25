@@ -1,8 +1,17 @@
 import React from "react";
 import ReactDOM from "react-dom";
 
-export class App extends React.Component {
-  constructor(props: {}) {
+interface Props {}
+interface State {
+  lat: null | number;
+  long: null | number;
+  geoError: null | string;
+  geoLoading: boolean;
+  turboMode: boolean;
+}
+
+export class App extends React.Component<Props, State> {
+  constructor(props: Props) {
     super(props);
     this.state = {
       lat: null,
@@ -195,7 +204,10 @@ export function parseWeatherApiResponse(json) {
   return { shortForecast, temperature };
 }
 
-export function determineOutfit(shortForecast, temperature) {
+export function determineOutfit(
+  shortForecast: string,
+  temperature: number
+): string {
   if (isRaining(shortForecast)) {
     if (temperature < 100) return "Better wear a jacket and bring an umbrella.";
     else return "Bring an umbrella.";
@@ -205,7 +217,7 @@ export function determineOutfit(shortForecast, temperature) {
   }
 }
 
-function isRaining(shortForecast) {
+function isRaining(shortForecast: string): boolean {
   const regex = /rain|storm|shower/i;
   return regex.test(shortForecast);
 }
